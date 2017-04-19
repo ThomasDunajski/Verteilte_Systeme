@@ -83,7 +83,9 @@ public class Freezer implements ActionListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		decreaseFoodAmounts(100);
+		//for(int i = 0; i < 100; i++){		//Performance- / LastTest
+			decreaseFoodAmounts(100);
+		//}
 	}
 	
 	
