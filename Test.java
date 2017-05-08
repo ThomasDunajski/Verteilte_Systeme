@@ -13,7 +13,7 @@ public class Test {
     public static void main(String[] args) throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         server.createContext("/kuehlschrank/history", new HistoryHandler());
-        server.createContext("/kuehlschrank/fuellstand", new HistoryHandler());
+        server.createContext("/kuehlschrank/fuellstand", new FuellstandHandler());
         server.start();
     }
 
