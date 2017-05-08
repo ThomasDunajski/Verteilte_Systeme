@@ -56,24 +56,24 @@ public class Webserver {
     		setHistory(history);
     	}
     	
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public void handle(HttpExchange t) throws IOException {
-        	Vector<String> foods = history.getHistory();	//original
-        	Vector<String> currentFood = new Vector<String>();
+        	Vector<String> foods = (Vector<String>) history.getHistory().clone();	//original
+        	Vector<String> currentFood = new Vector<String>();						//toPrint
         	
-        	
-        	
-            String temp = "";
-            for(int j = 0; j < )
-            String last = "";
-            for(int i = 0; i < foods.size(); i++){
-            	String[] temp2 = foods.elementAt(i).split(" ");
-            	temp = temp2[0];
-            	if(foods.elementAt(i).contains(temp)){
-            		last = foods.elementAt(i);
-            	}
+            for(int j = 0; j < foods.size(); j++){
+            	String[] temp2 = foods.elementAt(j).split(" ");
+            	String name = temp2[0];
+            	String last = "";
+                for(int i = 0; i < foods.size(); i++){
+                	if(foods.elementAt(i).contains(name)){
+                		last = foods.remove(i);
+                	}
+                }
+                currentFood.add(last);
             }
-            currentFood.add(last);
+            
             
             
             String response = "";
