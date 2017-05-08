@@ -1,5 +1,6 @@
 package Central;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public abstract class Main {
@@ -7,11 +8,14 @@ public abstract class Main {
 	private static ThreadPool threadPool;	//for multithreaded application
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		setThreadPool(new ThreadPool(Runtime.getRuntime().availableProcessors()));
 		
 		Central central = new Central();
 		central.start();
+		
+		Webserver webserver = new Webserver();
+		webserver.start(central.getHistory());
 		
 		handleInput(central);
 	}
