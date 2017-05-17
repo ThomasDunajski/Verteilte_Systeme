@@ -5,10 +5,12 @@ import java.net.Socket;
 public class UDPServer extends Server{
 
 	private History history;
+	private Buyer buyer;
 	
 	public UDPServer(int port, History history){
 		super(port);
 		this.history = history;
+		this.buyer = new Buyer(500, history);
 	}
 	
 	@Override
@@ -29,6 +31,7 @@ public class UDPServer extends Server{
   		try{
   			while (receiveRequest()) {
   				history.insert(line);
+  				buyer.check(line);
   			}
   			fromClient.close();
   			toClient.close();
