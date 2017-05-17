@@ -2,6 +2,8 @@ package Central;
 
 import java.net.Socket;
 
+import RPC.Buyer;
+
 public class UDPServer extends Server{
 
 	private History history;
