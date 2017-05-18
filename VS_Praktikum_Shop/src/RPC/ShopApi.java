@@ -7,10 +7,9 @@ public class ShopApi extends Shop implements Iface{
 
 	private Vector<Food> foods;
 	
-	public ShopApi() {
+	public ShopApi(Vector<Food> food) {
 		super();
-		this.foods = new Vector<Food>();
-		this.foods.add(new Food(1, "Milch"));
+		this.foods = food;
 	}
 
 	@Override
