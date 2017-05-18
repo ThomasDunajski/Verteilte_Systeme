@@ -4,6 +4,10 @@
 		{
 			"name":"Milch",
 			"price":2.1
+		},
+		{
+			"name":"Salami",
+			"price":5.3
 		}	
 	]
 }
