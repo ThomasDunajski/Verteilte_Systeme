@@ -11,26 +11,26 @@ public class Freezer implements ActionListener{
 	protected boolean running = false;
 	protected Vector<Food> foods;
 	protected Timer decreaseTimer;
-	protected TCPServer tcpServer;
+	protected UDPServer fromCentral;
 	
 	
 	public Freezer(int port){		
 		setFoods(new Vector<Food>());
 		decreaseTimer = new Timer(5000, this);
-		setTcpServer(new TCPServer(9999));
+		setUdpServer(new UDPServer(1111, this));
 	}
 	
 	
 	public void start(){
 		setRunning(true);
-		tcpServer.start();
+		fromCentral.start();
 		decreaseTimer.start();
 	}
 	
 	public void stop(){
 		setRunning(false);
 		decreaseTimer.stop();
-		tcpServer.stop();
+		fromCentral.stop();
 	}
 	
 	
@@ -107,11 +107,11 @@ public class Freezer implements ActionListener{
 	}
 	
 	
-	public TCPServer getTcpServer(){
-		return tcpServer;
+	public UDPServer getFromCentral(){
+		return fromCentral;
 	}
 	
-	public void setTcpServer(TCPServer tcpServer){
-		this.tcpServer = tcpServer;
+	public void setUdpServer(UDPServer fromCentral){
+		this.fromCentral = fromCentral;
 	}
 }

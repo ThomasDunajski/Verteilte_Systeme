@@ -1,14 +1,18 @@
 package Central;
 
+import RPC.Buyer;
+
 public class Central {
 
 	private boolean running = false;
 	private History history;
+	private Buyer buyer;
 	private UDPServer udpServer;
 	
 	public Central(){
 		history = new History();
-		udpServer = new UDPServer(8888, history);
+		buyer = new Buyer(1111, 500.00, history);
+		udpServer = new UDPServer(8888, history, buyer);
 	}
 	
 	

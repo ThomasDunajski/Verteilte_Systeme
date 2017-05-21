@@ -1,4 +1,4 @@
-package Central;
+package Freezer;
 
 import java.util.Vector;
 

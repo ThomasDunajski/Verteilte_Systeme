@@ -22,7 +22,7 @@ public class Sensor extends Client implements Observer{
 	
 	
 	private void saveInHistory(Food food){
-		line = food.toString();
+		line = food.toString() + " " + food.getOptimalAmount() + " " + food.getWhenToBuy();
 		sendData(line);
 	}
 }
