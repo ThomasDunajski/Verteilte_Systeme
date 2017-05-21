@@ -6,86 +6,89 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 
-import com.sun.javafx.runtime.SystemProperties;
-
 import Central.Food;
 import Central.FoodParser;
 import Central.History;
 
-public class Buyer {
+public class Buyer extends Client {
 
 	private double budget;
-	private History history;
+	private History history; 	//just a reference
 
-	private double currentPrice;
-	private Shop.Client cheapestShop;
-	private TTransport cheapestTransport;
-
-	public Buyer(double budget, History history) {
-		this.budget = budget;
-		this.history = history;
+	public Buyer(int port, double budget, History history) {
+		super(port);			//port to freezer
+		this.setBudget(budget);
+		this.setHistory(history);
 	}
 
-	public void check(String foodString) {
+	public void checkAndBuy(String foodString) {
 		Food food = FoodParser.parseFood(foodString);
 		if (food.getAmount() < food.getWhenToBuy()) {
-			order(food.getName(), food.getOptimalAmount());
+			order(food, food.getOptimalAmount() - food.getAmount());	//just buy needed food
 		}
 	}
 
-	private void order(String food, int amount) {
-
-		currentPrice = Double.MAX_VALUE;
-		cheapestShop = null;
-		
-		checkPrices(food, 9090);
-		checkPrices(food, 9091);
-		if (currentPrice != Double.MAX_VALUE){
+	private void order(Food food, int amount) {
 		try {
-			System.out.println("trying to buy " + amount + food + " for " + currentPrice );
-			performOrder(cheapestShop, amount);
-		} catch (TException e1) {
-			cheapestTransport.close();
-			cheapestShop = null;
-		}
-		}
-	}
-
-	private void checkPrices(String name, int port) {
-		try {
-			TTransport transport;
-
-			transport = new TSocket("localhost", port);
+			TTransport transport = new TSocket("localhost", 9090);	//port to shop
 			transport.open();
 
 			TProtocol protocol = new TBinaryProtocol(transport);
 			Shop.Client client = new Shop.Client(protocol);
 
-			double price = client.getPrice(name);
-			if (price < currentPrice) {
-				if (cheapestShop != null) {
-					cheapestTransport.close();	
-				}
-				cheapestShop = client;
-				currentPrice = price;
-			}
+			perform(client, food, amount);
+
+			transport.close();
 		} catch (TException x) {
-			System.out.println("shop at: " + port + " could not be reached");
+			System.err.println("Can not connect to a shop");
 		}
 	}
 
-	private void performOrder(Shop.Client client, int amount) throws TException {
-		Order o = new Order();
-		o.setAmount(amount);
-		o.setProduct("Milch");
-		boolean orderAccepted = client.placeOrder(o);
-		if (orderAccepted) {
-			System.out.println("Order accepted by shop");
-		} else {
-			System.out.println("failed to order new " + o.getProduct());
+	private void perform(Shop.Client client, Food food, int amount){
+		try{
+			Order o = new Order();
+			o.setAmount(amount);
+			o.setProduct(food.getName());
+			
+			boolean orderAccepted = client.placeOrder(o);
+			double price = client.getPrice(o.getProduct());
+			if(orderAccepted && budget >= price) {
+				System.out.println("Buyer send an accepted order to shop.");
+				sendData(food.getName() + " " + amount + " " 
+						+ food.getOptimalAmount() + " " + food.getWhenToBuy());
+				subBudget(price);
+				System.out.println("Increased " + food.getName() + " in freezer by " + amount + ".");
+			} else {
+				System.out.println("failed to order " + o.getProduct() + ": " + o.getAmount());
+			}
+			System.out.println("Current Budget = " + budget);
+		}catch(TException x){
+			x.printStackTrace();
 		}
-		if (cheapestTransport != null){
-			cheapestTransport.close();
-		}
+	}
+
+	
+	public void addBudget(double add){
+		setBudget(budget + add);
+	}
+	
+	public void subBudget(double sub){
+		setBudget(budget - sub);
+	}
+	
+	public double getBudget() {
+		return budget;
+	}
+
+	public void setBudget(double budget) {
+		this.budget = budget;
+	}
+
+	public History getHistory() {
+		return history;
+	}
+
+	public void setHistory(History history) {
+		this.history = history;
 	}
 }

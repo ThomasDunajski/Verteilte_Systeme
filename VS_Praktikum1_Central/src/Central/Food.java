@@ -16,7 +16,10 @@ public class Food extends Observable{
 		setOptimalAmount(optimalAmount);
 		setWhenToBuy(whenToBuy);
 	}
-	
+
+	public void increaseAmount(int increase){
+		setAmount(amount + increase);
+	}
 	
 	public void decreaseAmount(int decrease){
 		setAmount(amount - decrease);
@@ -25,7 +28,7 @@ public class Food extends Observable{
 	
 	@Override
 	public String toString(){
-		return name + ": " + amount;
+		return name + " " + amount;
 	}
 	
 	@Override

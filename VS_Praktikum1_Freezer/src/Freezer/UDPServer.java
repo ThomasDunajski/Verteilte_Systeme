@@ -1,18 +1,14 @@
-package Central;
+package Freezer;
 
 import java.net.Socket;
 
-import RPC.Buyer;
-
 public class UDPServer extends Server{
 
-	private History history;	//just a reference
-	private Buyer buyer;		//just a reference
+	private Freezer freezer;	//just a reference
 	
-	public UDPServer(int port, History history, Buyer buyer){
+	public UDPServer(int port, Freezer freezer){
 		super(port);
-		this.history = history;
-		this.buyer = buyer;
+		this.freezer = freezer;
 	}
 	
 	@Override
@@ -32,8 +28,21 @@ public class UDPServer extends Server{
   		super.handleRequests(socket);
   		try{
   			while (receiveRequest()) {
-  				history.insert(line);
-  				buyer.checkAndBuy(line);
+  				Food food = FoodParser.parseFood(line);
+  				boolean found = false;
+  				for(int i = 0; i < freezer.getFoods().size(); i++){
+  					if(food.getName().equals(freezer.getFoods().elementAt(i).getName())){
+  						Food current = freezer.getFoods().elementAt(i);
+  						int before = current.getAmount();
+  						current.increaseAmount(food.getAmount());
+  						System.out.println(current.getName() + " is filled up from " + before + " to " + current.getAmount());
+  						found = true;
+  						break;
+  					}
+  				}
+  				if(!found){		//not yet registered
+  					freezer.insert(food);
+  				}
   			}
   			fromClient.close();
   			toClient.close();

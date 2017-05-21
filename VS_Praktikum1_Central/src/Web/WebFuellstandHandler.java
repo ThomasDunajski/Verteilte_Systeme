@@ -1,33 +1,34 @@
-package Central;
+package Web;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
 
+import Central.FoodParser;
+import Central.History;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-public class WebHistoryHandler implements HttpHandler {
-    	
+public class WebFuellstandHandler implements HttpHandler {
+	
     	private History history;
     	
-    	public WebHistoryHandler(History history){
+    	public WebFuellstandHandler(History history){
     		setHistory(history);
     	}
     	
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public void handle(HttpExchange t) throws IOException {
-        	Vector<String> foods = history.getHistory();
-            String response = "";
-            for(int i = 0; i < foods.size(); i++){
-            	response += foods.elementAt(i) + "\n";
-            }
+        	String response = FoodParser.parseFoodsToString((Vector<String>) history.getHistory().clone()); 
             t.sendResponseHeaders(200, response.length());
             OutputStream os = t.getResponseBody();
             os.write(response.getBytes());
             os.close();
         }
-        
+
+
 		public History getHistory() {
 			return history;
 		}
@@ -36,5 +37,4 @@ public class WebHistoryHandler implements HttpHandler {
 		public void setHistory(History history) {
 			this.history = history;
 		}
-        
     }

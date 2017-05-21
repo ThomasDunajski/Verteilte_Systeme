@@ -6,7 +6,6 @@ public class History {
 
 	private Vector<String> history;
 	
-	
 	public History(){
 		history = new Vector<String>();
 	}
